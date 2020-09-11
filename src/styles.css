@@ -4,6 +4,7 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins|Nunito');
 @import '~nouislider/distribute/nouislider.min.css';
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 body {
 	background-image: url('https://images.alphacoders.com/113/thumb-1920-113793.jpg');

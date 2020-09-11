@@ -1,0 +1,133 @@
+*,
+*:before,
+*:after {
+	box-sizing: border-box;
+}
+
+.navbar-default {
+	background-color: #281c38;
+	border-color: #e7e7e7;
+	color: whitesmoke;
+}
+
+.navbar {
+	position: relative;
+	min-height: 50px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	box-shadow: 5px 5px 5px black, inset 2px 2px 2px rgba(255, 255, 255, 0.4),
+		inset -2px -2px 2px rgba(0, 0, 0, 0.4);
+}
+
+.navbar-default .navbar-brand {
+	color: #c38a00;
+	font-size: 2em;
+	font-family: 'Poppins', sans-serif;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus {
+	color: #c38a00;
+	cursor: default;
+	background-color: #281c38;
+	border: 1px solid #ddd;
+	border-bottom-color: transparent;
+}
+
+.nav-tabs > li.active > a {
+	box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 0.4),
+		inset -2px -2px 2px rgba(0, 0, 0, 0.4);
+}
+
+.nav-tabs > li > a:focus,
+.nav-tabs > li > a:hover {
+	color: #e0dbdb;
+	cursor: pointer;
+	background-color: gray;
+	border: 1px solid #ddd;
+	border-bottom-color: transparent;
+}
+
+.nav-tabs {
+	border-bottom: 1px solid #281c38;
+	color: #281c38;
+}
+
+.nav-tabs > li > a {
+	color: #281c38;
+}
+
+.row::after {
+	content: '';
+	clear: both;
+	display: block;
+}
+
+[class*='col-'] {
+	float: left;
+	padding: 15px;
+}
+
+#container {
+	height: 100%;
+}
+
+.col-1 {
+	width: 30%;
+	background-color: #dfdecf;
+}
+
+.col-2 {
+	width: 70%;
+	background-color: rgba(0, 0, 0, 0.6);
+	border-radius: 20px;
+}
+
+.results {
+	max-height: 70%;
+	overflow-y: auto;
+}
+
+@media only screen and (max-width: 768px) {
+	/* For mobile phones: */
+	[class*='col-'] {
+		width: 100%;
+	}
+}
+
+.ow-form {
+	position: relative;
+	padding: 5%;
+	border: 1px solid #281c38;
+	border-top: 0;
+	font-size: 0.9em;
+}
+.resetBtn {
+	position: absolute;
+	top: 32%;
+	right: 10%;
+}
+
+.ow-slider {
+	padding: 5%;
+	border: 1px solid #281c38;
+	margin-top: 2%;
+}
+
+/* Here we use angular validation CSS classes */
+
+/* Field borders turn red when touched and invalid */
+
+input.ng-touched.ng-invalid,
+select.ng-touched.ng-invalid {
+	border-color: red;
+	border-width: 2px;
+}
+
+/* Field borders turn green when touched and invalid */
+
+input.ng-touched.ng-valid,
+select.ng-touched.ng-valid {
+	border-color: #281c38;
+	border-width: 2px;
+}
