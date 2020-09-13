@@ -37,12 +37,23 @@ export class FlightSearchComponent implements OnInit {
 		};
 	}
 
+	//if origin or destination are filled, the other one must be filled as well
+	validateForm() {
+		if (
+			(this.filter.origin && !this.filter.destination) ||
+			(!this.filter.origin && this.filter.destination)
+		) {
+			return false;
+		}
+		return true;
+	}
+
 	noResults() {
 		// Conditions to check whether or not to display results
 		return this.flightArr.length === 0;
 	}
 
-	//another filter is called each time the pice slider changes
+	//another filter is called each time the pice slider changes, for better user experience
 	onChange($event) {
 		this.searchFlights();
 	}

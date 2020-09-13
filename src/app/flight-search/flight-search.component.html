@@ -128,6 +128,7 @@
 								class="form-control"
 								class="btn btn-primary btn-block"
 								value="Submit"
+								[disabled]="!validateForm()"
 							/>
 						</div>
 
@@ -145,6 +146,7 @@
 								[step]="500"
 								[(ngModel)]="filter.priceRange"
 								(ngModelChange)="onChange($event)"
+								[disabled]="!validateForm()"
 							></nouislider>
 							Price Range: {{ filter.priceRange[0] | currency: 'USD' }} to
 							{{ filter.priceRange[1] | currency: 'USD' }}
