@@ -8,9 +8,10 @@ import { NouisliderModule } from 'ng2-nouislider';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlightService } from './services/flight-service';
 import { DatePipe } from '@angular/common';
+import { FlightSearchComponent } from './flight-search/flight-search.component';
 
 @NgModule({
-	declarations: [AppComponent],
+	declarations: [AppComponent	,FlightSearchComponent],
 	imports: [
 		BrowserModule,
 		MaterialModule,
