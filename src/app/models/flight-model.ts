@@ -4,7 +4,5 @@ export interface FlightModel {
 	destination: string;
 	deptDate: Date;
 	price: number;
-	ids: Array<number>;
 	length: number;
 }
-

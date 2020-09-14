@@ -11,7 +11,7 @@ import { FlightModel } from '../models/flight-model';
 export class FlightSearchComponent implements OnInit {
 	// Necessary variable declarations which will be used in html
 	filter: FilterModel;
-	flightArr: Array<FlightModel> = [];
+	flightArr: Array<Array<FlightModel>> = [];
 
 	// Using constructor, call the FlightService.
 	constructor(private _flightService: FlightService) {}

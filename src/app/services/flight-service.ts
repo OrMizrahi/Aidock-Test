@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import moment from 'moment';
+import { COUNTRIES_IDS } from '../consts';
 import { FlightModel } from '../models/flight-model';
 import { FilterModel } from '../models/filter-model';
 
@@ -12,7 +13,6 @@ export class FlightService {
 			destination: 'France',
 			deptDate: new Date('08 May, 2018'),
 			price: 2001,
-			ids: [],
 			length: 3.5,
 		},
 
@@ -22,7 +22,6 @@ export class FlightService {
 			destination: 'Sweden',
 			deptDate: new Date('08 May, 2018'),
 			price: 2000,
-			ids: [],
 			length: 2,
 		},
 
@@ -32,7 +31,6 @@ export class FlightService {
 			destination: 'Germany',
 			deptDate: new Date('08 May, 2018'),
 			price: 2000,
-			ids: [],
 			length: 2,
 		},
 		{
@@ -41,7 +39,6 @@ export class FlightService {
 			destination: 'Russia',
 			deptDate: new Date('08 May, 2018'),
 			price: 2000,
-			ids: [],
 			length: 1.5,
 		},
 		{
@@ -50,7 +47,6 @@ export class FlightService {
 			destination: 'Germany',
 			deptDate: new Date('08 May, 2018'),
 			price: 2000,
-			ids: [],
 			length: 4.5,
 		},
 		{
@@ -59,14 +55,31 @@ export class FlightService {
 			destination: 'Germany',
 			deptDate: new Date('08 May, 2018'),
 			price: 1700,
-			ids: [],
 			length: 6,
 		},
 	];
+	adjList: Array<Array<{ dest: number; fID: number }>>;
+	result: Array<string>;
 
-	constructor() {}
+	constructor() {
+		this.adjList = new Array<Array<{ dest: number; fID: number }>>(
+			Object.keys(COUNTRIES_IDS).length
+		);
+		for (let i = 0; i < 5; i++) {
+			this.adjList[i] = new Array<{ dest: number; fID: number }>();
+		}
 
-	getFlightDetails(filter: FilterModel): Array<FlightModel> {
+		this.allFlights.forEach((flight) => {
+			this.adjList[COUNTRIES_IDS[flight.origin]].push({
+				dest: COUNTRIES_IDS[flight.destination],
+				fID: flight.id,
+			});
+		});
+
+		this.result = new Array<string>();
+	}
+
+	getFlightDetails(filter: FilterModel): Array<Array<FlightModel>> {
 		let {
 			priceRange,
 			minDate,
@@ -75,93 +88,81 @@ export class FlightService {
 			origin,
 			destination,
 		} = filter;
-		let filteredFlights = [];
+		let fromDate = minDate ? moment(minDate) : null;
+		let toDate = maxDate ? moment(maxDate) : null;
 
-		let connectedFlights = this.getConnectedFlights(
-			origin,
-			destination,
-			null,
-			new Array<FlightModel>()
-		);
+		//reseting resulr before each search
+		this.result = new Array<string>();
+		//sets the flights into result
+		this.setConnectedFlights(COUNTRIES_IDS[origin], COUNTRIES_IDS[destination]);
 
-		if (!connectedFlights) {
+		if (this.result.length === 0) {
 			return [];
 		}
 
-		let directFlights = this.allFlights.filter(
-			(flight) =>
-				(origin ? flight.origin === origin : true) &&
-				(destination ? flight.destination === destination : true)
-		);
-		directFlights.forEach((f) =>
-			f.ids.length === 0 ? f.ids.push(f.id) : null
-		);
+		let allFlights: Array<Array<FlightModel>> = new Array<Array<FlightModel>>();
+		let temp: Array<FlightModel> = new Array<FlightModel>();
 
-		connectedFlights = connectedFlights.filter((f) =>
-			directFlights ? !directFlights.includes(f) : true
-		);
-		if (connectedFlights.length > 0) {
-			connectedFlights[0].ids = connectedFlights.map((f) => f.id);
+		for (const currFlightsIds of this.result) {
+			for (let currFlightId of currFlightsIds.split(' ')) {
+				temp.push(this.allFlights.find((f) => f.id === parseInt(currFlightId)));
+			}
+			allFlights.push(temp);
+			temp = new Array<FlightModel>();
 		}
 
-		filteredFlights = connectedFlights
-			? [...connectedFlights, ...directFlights]
-			: directFlights;
-
-		return filteredFlights.filter((flight: FlightModel) => {
-			if (flight.ids.length === 0) {
-				return false;
-			}
-
-			let fromDate = minDate ? moment(minDate) : null;
-			let toDate = maxDate ? moment(maxDate) : null;
-			let actualDate = moment(flight.deptDate);
-			let price =
-				flight.ids.length === 1
-					? flight.price
-					: this.allFlights
-							.filter((f) => flight.ids.includes(f.id))
-							.reduce((a, b) => a + b.price, 0);
-
+		return allFlights.filter((flights) => {
+			let totalPrice = flights.reduce((acc, f) => acc + f.price, 0);
+			let actualDate = moment(flights[0].deptDate);
 			return (
 				(priceRange
-					? priceRange[0] <= price && priceRange[1] >= price
+					? priceRange[0] <= totalPrice && priceRange[1] >= totalPrice
 					: true) &&
 				(fromDate ? fromDate.isSameOrBefore(actualDate) : true) &&
 				(toDate ? toDate.isSameOrAfter(actualDate) : true) &&
 				(numOfConnections != null
-					? flight.ids.length - 1 === numOfConnections
+					? flights.length - 1 === numOfConnections
 					: true)
 			);
 		});
 	}
 
-	getConnectedFlights(
-		origin: string,
-		destination: string,
-		newDest: string,
-		connections: Array<FlightModel>
-	): Array<FlightModel> {
-		if (origin === destination) {
-			return connections;
-		}
-		let newstartFlights = newDest
-			? this.allFlights.filter((f) => f.origin === newDest)
-			: this.allFlights.filter((f) => f.origin === origin);
+	setConnectedFlights(origin: number, destination: number) {
+		let isVisited = new Array<boolean>(5);
+		let pathList = new Array<number>();
 
-		for (const flight of newstartFlights) {
-			connections.push(flight);
-
-			return this.getConnectedFlights(
-				flight.destination,
-				destination,
-				flight.destination,
-				connections
-			);
-		}
+		this.addAllPathsUtil(origin, destination, isVisited, pathList);
 	}
+	addAllPathsUtil(
+		origin: number,
+		destination: number,
+		isVisited: boolean[],
+		pathList: number[]
+	) {
+		if (origin === destination) {
+			this.result.push(pathList.join(' '));
+			return;
+		}
 
-	getAllFlights(): Array<FlightModel> {
-		return this.allFlights;
+		// Mark the current node
+		isVisited[origin] = true;
+
+		// Recur for all the vertices
+		// adjacent to current vertex
+		for (const i of this.adjList[origin]) {
+			if (!isVisited[i.dest]) {
+				// store current node
+				// in path[]
+				pathList.push(i.fID);
+				this.addAllPathsUtil(i.dest, destination, isVisited, pathList);
+
+				// remove current node
+				// in path[]
+				pathList.pop();
+			}
+		}
+
+		// Mark the current node
+		isVisited[origin] = false;
 	}
 }
