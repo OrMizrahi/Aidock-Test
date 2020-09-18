@@ -8,10 +8,17 @@ import { NouisliderModule } from 'ng2-nouislider';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlightService } from './services/flight-service';
 import { DatePipe } from '@angular/common';
-import { FlightSearchComponent } from './flight-search/flight-search.component';
+import { SortPipe } from './custom-pipes/sort.pipe';
+import { FlightSearchResultsComponent } from './components/flight-search-results/flight-search-results.component';
+import { FlightSearchComponent } from './components/flight-search/flight-search.component';
 
 @NgModule({
-	declarations: [AppComponent	,FlightSearchComponent],
+	declarations: [
+		AppComponent,
+		FlightSearchComponent,
+		FlightSearchResultsComponent,
+		SortPipe,
+	],
 	imports: [
 		BrowserModule,
 		MaterialModule,

@@ -1,0 +1,75 @@
+<h3 style="color: whitesmoke; text-align: center">Search Results</h3>
+<hr />
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="table-resposive">
+			<table class="table table-striped">
+				<tbody>
+					<tr
+						class="no-results"
+						*ngIf="!(flightResults?.length > 0); else flightList"
+					>
+						<h3 style="color: red; text-align: center">
+							No results to display
+						</h3>
+					</tr>
+					<!-- Loop through input array -->
+					<ng-template #flightList>
+						<select
+							name="sortBy"
+							id="sortBy"
+							[(ngModel)]="sortBy"
+							name="sortBy"
+						>
+							<option value="" [disabled]="true" selected>
+								Choose Sorting Option
+							</option>
+							<option value="ascTime">Sort By Time (asc.)</option>
+							<option value="descTime">Sort By Time (desc.)</option>
+							<option value="ascConnections">Sort By Connections (asc.)</option>
+							<option value="descConnections">
+								Sort By Connections (desc.)
+							</option>
+							<option value="ascPrice">Sort By Price (asc.)</option>
+							<option value="descPrice">Sort By Price (desc.)</option>
+						</select>
+						<tr
+							*ngFor="
+								let flights of flightResults | sort: sortBy;
+								let i = index
+							"
+						>
+							<div id="fltRes">
+								<td *ngFor="let flight of flights" class="col-toDetails-many">
+									<!-- Onward flight details -->
+									<br />
+									{{ flight?.origin }} > {{ flight?.destination }} <br />
+									Depart:
+									{{ flight?.deptDate | date: 'shortDate' }}
+									<br />
+									Price: {{ flight?.price | currency: 'USD' }}
+									<br />
+									Time: {{ flight.length }}
+								</td>
+
+								<td class="col-totals">
+									<!-- Fare details -->
+									<span
+										>TOTAL FARE:
+										<strong>{{
+											calcPrice(flights) | currency: 'USD'
+										}}</strong></span
+									>
+									<br />
+									<span
+										>TOTAL Time: <strong>{{ calcTime(flights) }}</strong></span
+									>
+								</td>
+							</div>
+						</tr>
+					</ng-template>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

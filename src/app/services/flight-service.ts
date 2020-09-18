@@ -1,12 +1,20 @@
 import { Injectable } from '@angular/core';
 import moment from 'moment';
 import { COUNTRIES_IDS } from '../consts';
-import { FlightModel } from '../models/flight-model';
 import { FilterModel } from '../models/filter-model';
+import { FlightModel } from '../models/flight-model';
 
 @Injectable()
 export class FlightService {
-	private allFlights: FlightModel[] = [
+	allFlights: FlightModel[] = [
+		{
+			id: 5,
+			origin: 'Germany',
+			destination: 'Russia',
+			deptDate: new Date('08 May, 2018'),
+			price: 2000,
+			length: 1.5,
+		},
 		{
 			id: 1,
 			origin: 'Israel',
@@ -24,23 +32,6 @@ export class FlightService {
 			price: 2000,
 			length: 2,
 		},
-
-		{
-			id: 4,
-			origin: 'France',
-			destination: 'Germany',
-			deptDate: new Date('08 May, 2018'),
-			price: 2000,
-			length: 2,
-		},
-		{
-			id: 5,
-			origin: 'Germany',
-			destination: 'Russia',
-			deptDate: new Date('08 May, 2018'),
-			price: 2000,
-			length: 1.5,
-		},
 		{
 			id: 2,
 			origin: 'Israel',
@@ -48,6 +39,14 @@ export class FlightService {
 			deptDate: new Date('08 May, 2018'),
 			price: 2000,
 			length: 4.5,
+		},
+		{
+			id: 4,
+			origin: 'France',
+			destination: 'Germany',
+			deptDate: new Date('08 May, 2018'),
+			price: 2000,
+			length: 2,
 		},
 		{
 			id: 7,
@@ -60,12 +59,15 @@ export class FlightService {
 	];
 	adjList: Array<Array<{ dest: number; fID: number }>>;
 	result: Array<string>;
+	countriesLength: number;
 
 	constructor() {
+		this.countriesLength = Object.keys(COUNTRIES_IDS).length;
+
 		this.adjList = new Array<Array<{ dest: number; fID: number }>>(
-			Object.keys(COUNTRIES_IDS).length
+			this.countriesLength
 		);
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < this.countriesLength; i++) {
 			this.adjList[i] = new Array<{ dest: number; fID: number }>();
 		}
 
@@ -93,10 +95,16 @@ export class FlightService {
 
 		//reseting resulr before each search
 		this.result = new Array<string>();
-		//sets the flights into result
-		this.setConnectedFlights(COUNTRIES_IDS[origin], COUNTRIES_IDS[destination]);
+
+		if (origin && destination) {
+			//sets the flights into result
+			this.setResultsFlights(COUNTRIES_IDS[origin], COUNTRIES_IDS[destination]);
+		} else {
+			this.result = this.allFlights.map((f) => f.id.toString());
+		}
 
 		if (this.result.length === 0) {
+			console.log('no flights');
 			return [];
 		}
 
@@ -127,8 +135,41 @@ export class FlightService {
 		});
 	}
 
-	setConnectedFlights(origin: number, destination: number) {
-		let isVisited = new Array<boolean>(5);
+	sortByConnections(
+		value: FlightModel[][],
+		sortOption: string
+	): FlightModel[][] {
+		return value.sort((f1, f2) =>
+			sortOption === 'asc' ? f1.length - f2.length : f2.length - f1.length
+		);
+	}
+	sortByTime(value: FlightModel[][], sortOption: string): FlightModel[][] {
+		return value.sort((f1, f2) => {
+			let f1Time = this.calcTime(f1);
+			let f2Time = this.calcTime(f2);
+
+			return sortOption === 'asc' ? f1Time - f2Time : f2Time - f1Time;
+		});
+	}
+
+	sortByPrice(value: FlightModel[][], sortOption: string): FlightModel[][] {
+		return value.sort((f1, f2) => {
+			let f1Price = this.calcPrice(f1);
+			let f2Price = this.calcPrice(f2);
+
+			return sortOption === 'asc' ? f1Price - f2Price : f2Price - f1Price;
+		});
+	}
+
+	calcPrice(connFlights: FlightModel[]): number {
+		return connFlights.reduce((acc, f) => acc + f.price, 0);
+	}
+	calcTime(connFlights: FlightModel[]): number {
+		return connFlights.reduce((acc, f) => acc + f.length, 0);
+	}
+
+	setResultsFlights(origin: number, destination: number) {
+		let isVisited = new Array<boolean>(this.countriesLength);
 		let pathList = new Array<number>();
 
 		this.addAllPathsUtil(origin, destination, isVisited, pathList);

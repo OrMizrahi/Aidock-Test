@@ -1,0 +1,20 @@
+/* Styles go here */
+
+[class*='col-'] {
+	float: left;
+	padding: 15px;
+	height: 100%;
+}
+.col-totals {
+	flex-basis: 25%;
+	border: 1px solid purple;
+	border-radius: 10px;
+	margin: auto;
+	white-space: nowrap;
+}
+#fltRes {
+	display: flex;
+}
+.no-results {
+	margin: auto;
+}

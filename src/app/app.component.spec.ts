@@ -1,32 +1,15 @@
-import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { FlightSearchComponent } from './flight-search/flight-search.component';
 
 describe('AppComponent', () => {
-	beforeEach(async () => {
-		await TestBed.configureTestingModule({
-			declarations: [AppComponent, FlightSearchComponent],
-		}).compileComponents();
+	let fixture: AppComponent;
+
+	beforeEach(() => {
+		fixture = new AppComponent();
 	});
 
-	it('should create the app', () => {
-		const fixture = TestBed.createComponent(AppComponent);
-		const app = fixture.componentInstance;
-		expect(app).toBeTruthy();
-	});
-
-	it(`should have as title 'Aidock-test'`, () => {
-		const fixture = TestBed.createComponent(AppComponent);
-		const app = fixture.componentInstance;
-		expect(app.title).toEqual('Aidock-test');
-	});
-
-	it('should render title', () => {
-		const fixture = TestBed.createComponent(AppComponent);
-		fixture.detectChanges();
-		const compiled = fixture.nativeElement;
-		expect(compiled.querySelector('.content span').textContent).toContain(
-			'Aidock-test app is running!'
-		);
+	describe('Setup Component', () => {
+		it('should be initialized', () => {
+			expect(fixture.title).toEqual('aidock-test');
+		});
 	});
 });

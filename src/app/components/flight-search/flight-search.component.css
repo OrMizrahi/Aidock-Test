@@ -4,6 +4,50 @@
 	box-sizing: border-box;
 }
 
+.form-error {
+	margin-top: 20px;
+	font-size: 1.6rem;
+	text-align: center;
+}
+.flex-container {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+.main-form {
+	flex-basis: 80%;
+}
+.resetBtn {
+	margin-top: 20px;
+}
+.resetBtn button {
+	font-size: 16px;
+	background-color: rgb(156, 189, 189);
+	border: none;
+	border-radius: 8px;
+	outline: none;
+}
+.switch-btn {
+	position: absolute;
+	left: 38%;
+	top: 1.8%;
+	outline: none;
+	border: none;
+	max-height: 26px;
+	border-radius: 8px;
+	background-color: rgb(156, 189, 189);
+}
+.resetFilterBtn {
+	position: absolute;
+	top: 3%;
+	right: 20%;
+	border: none;
+	outline: none;
+	text-decoration: none;
+	border-radius: 3px;
+	background-color: rgb(156, 189, 189);
+	padding: 5px 10px;
+}
 .navbar-default {
 	background-color: #281c38;
 	border-color: #e7e7e7;
@@ -73,12 +117,13 @@
 }
 
 .col-1 {
-	width: 30%;
+	width: 35%;
 	background-color: #dfdecf;
+	position: relative;
 }
 
 .col-2 {
-	width: 70%;
+	width: 65%;
 	background-color: rgba(0, 0, 0, 0.6);
 	border-radius: 20px;
 }
@@ -102,32 +147,9 @@
 	border-top: 0;
 	font-size: 0.9em;
 }
-.resetBtn {
-	position: absolute;
-	top: 32%;
-	right: 10%;
-}
 
 .ow-slider {
 	padding: 5%;
 	border: 1px solid #281c38;
 	margin-top: 2%;
-}
-
-/* Here we use angular validation CSS classes */
-
-/* Field borders turn red when touched and invalid */
-
-input.ng-touched.ng-invalid,
-select.ng-touched.ng-invalid {
-	border-color: red;
-	border-width: 2px;
-}
-
-/* Field borders turn green when touched and invalid */
-
-input.ng-touched.ng-valid,
-select.ng-touched.ng-valid {
-	border-color: #281c38;
-	border-width: 2px;
 }

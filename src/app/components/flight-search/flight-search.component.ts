@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { FlightService } from '../services/flight-service';
-import { FilterModel } from '../models/filter-model';
-import { FlightModel } from '../models/flight-model';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { COUNTRIES_IDS } from 'src/app/consts';
+import { FilterModel } from 'src/app/models/filter-model';
+import { FlightModel } from 'src/app/models/flight-model';
+import { FlightService } from 'src/app/services/flight-service';
 
 @Component({
 	selector: 'app-flight-search',
@@ -12,7 +13,7 @@ export class FlightSearchComponent implements OnInit {
 	// Necessary variable declarations which will be used in html
 	filter: FilterModel;
 	flightArr: Array<Array<FlightModel>> = [];
-
+	countries: Array<string> = Object.keys(COUNTRIES_IDS);
 	// Using constructor, call the FlightService.
 	constructor(private _flightService: FlightService) {}
 	ngOnInit() {
@@ -28,7 +29,7 @@ export class FlightSearchComponent implements OnInit {
 
 	resetFilter() {
 		this.filter = {
-			priceRange: [500, 5000],
+			priceRange: [1000, 7500],
 			minDate: null,
 			maxDate: null,
 			origin: '',
@@ -41,11 +42,23 @@ export class FlightSearchComponent implements OnInit {
 	validateForm() {
 		if (
 			(this.filter.origin && !this.filter.destination) ||
-			(!this.filter.origin && this.filter.destination)
+			(!this.filter.origin && this.filter.destination) ||
+			this.sameOriginAndDest()
 		) {
 			return false;
 		}
 		return true;
+	}
+
+	sameOriginAndDest() {
+		if (
+			this.filter.origin &&
+			this.filter.destination &&
+			this.filter.origin === this.filter.destination
+		) {
+			return true;
+		}
+		return false;
 	}
 
 	noResults() {
@@ -53,8 +66,30 @@ export class FlightSearchComponent implements OnInit {
 		return this.flightArr.length === 0;
 	}
 
+	switchOriginAndDest() {
+		const temp = this.filter.destination;
+		this.filter.destination = this.filter.origin;
+		this.filter.origin = temp;
+	}
+
 	//another filter is called each time the pice slider changes, for better user experience
-	onChange($event) {
+	onChange() {
 		this.searchFlights();
+	}
+	@ViewChild('destCity') destCitySelect: ElementRef;
+	focusDestCity($event) {
+		this.destCitySelect.nativeElement.focus();
+	}
+	@ViewChild('fromDate') fromDatePicker: ElementRef;
+	focusFromDate($event) {
+		this.fromDatePicker.nativeElement.focus();
+	}
+	@ViewChild('toDate') toDatePicker: ElementRef;
+	focusToDate($event) {
+		this.toDatePicker.nativeElement.focus();
+	}
+	@ViewChild('numOfConnections') numOfConnectionsInput: ElementRef;
+	focusToNumOfConnections($event) {
+		this.numOfConnectionsInput.nativeElement.focus();
 	}
 }

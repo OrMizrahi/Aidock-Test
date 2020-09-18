@@ -1,0 +1,256 @@
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Flight Finder</a>
+		</div>
+	</div>
+</nav>
+
+<div class="container-fluid" id="container">
+	<div class="search-panel col-1">
+		<!-- Reset Button -->
+		<button
+			class="resetFilterBtn"
+			color="primary"
+			aria-label="Example icon button with a delete icon"
+			(click)="resetFilter()"
+		>
+			Reset All
+		</button>
+		<ul class="nav nav-tabs">
+			<li class="active">
+				<a data-toggle="tab" href="#search-form"><b>One Way</b></a>
+			</li>
+		</ul>
+
+		<div class="tab-content">
+			<div id="search-form" class="tab-pane fade in active">
+				<div class="ow-form">
+					<button
+						class="switch-btn"
+						type="button"
+						(click)="switchOriginAndDest()"
+					>
+						<mat-icon>swap_horiz</mat-icon>
+					</button>
+
+					<form autocomplete="off" (ngSubmit)="searchFlights()">
+						<!-- Origin City -->
+						<div class="form-group flex-container">
+							<div class="main-form">
+								<label for="originCity">Origin City</label>
+								<select
+									class="form-control"
+									[(ngModel)]="filter.origin"
+									id="originCity"
+									name="originCity"
+									(ngModelChange)="focusDestCity($event)"
+								>
+									<option value="" [disabled]="true" selected>
+										Enter Origin City
+									</option>
+									<option *ngFor="let country of countries" [value]="country">
+										{{ country }}
+									</option>
+								</select>
+							</div>
+							<div class="resetBtn">
+								<button
+									type="button"
+									color="primary"
+									(click)="filter.origin = ''"
+								>
+									⟲
+								</button>
+							</div>
+						</div>
+						<!-- Destination City -->
+						<div class="form-group flex-container">
+							<div class="main-form">
+								<label for="destCity">Destination City</label>
+								<select
+									#destCity
+									class="form-control"
+									[(ngModel)]="filter.destination"
+									id="destCity"
+									name="destCity"
+									(ngModelChange)="focusFromDate($event)"
+								>
+									<option value="" [disabled]="true" selected>
+										Enter Destination City
+									</option>
+									<option *ngFor="let country of countries" [value]="country">
+										{{ country }}
+									</option>
+								</select>
+								<mat-error class="form-error" *ngIf="sameOriginAndDest()">
+									Error! Origin and destination can't be the same.
+								</mat-error>
+							</div>
+							<div class="resetBtn">
+								<button
+									type="button"
+									color="primary"
+									(click)="filter.destination = ''"
+								>
+									⟲
+								</button>
+							</div>
+						</div>
+
+						<!-- From Date -->
+						<div class="form-group flex-container">
+							<div class="main-form">
+								<mat-form-field class="example-container">
+									<input
+										matInput
+										[matDatepicker]="picker1"
+										id="fromDate"
+										name="fromDate"
+										placeholder="From Date"
+										[(ngModel)]="filter.minDate"
+										onkeydown="return false;"
+										#fromDate
+										(ngModelChange)="focusToDate($event)"
+									/>
+									<mat-datepicker-toggle
+										matSuffix
+										[for]="picker1"
+									></mat-datepicker-toggle>
+									<mat-datepicker #picker1></mat-datepicker>
+								</mat-form-field>
+							</div>
+							<div class="resetBtn">
+								<button
+									type="button"
+									color="primary"
+									(click)="filter.minDate = null"
+								>
+									⟲
+								</button>
+							</div>
+						</div>
+
+						<!-- To Date -->
+						<div class="form-group flex-container">
+							<div class="main-form">
+								<mat-form-field class="example-container">
+									<input
+										matInput
+										[matDatepicker]="picker2"
+										id="toDate"
+										name="toDate"
+										placeholder="To Date"
+										[(ngModel)]="filter.maxDate"
+										onkeydown="return false;"
+										#toDate
+										(ngModelChange)="focusToNumOfConnections($event)"
+									/>
+									<mat-datepicker-toggle
+										matSuffix
+										[for]="picker2"
+									></mat-datepicker-toggle>
+									<mat-datepicker #picker2></mat-datepicker>
+								</mat-form-field>
+							</div>
+							<div class="resetBtn">
+								<button
+									type="button"
+									color="primary"
+									(click)="filter.maxDate = null"
+								>
+									⟲
+								</button>
+							</div>
+						</div>
+
+						<!-- Connections count -->
+						<div class="form-group flex-container">
+							<div class="main-form">
+								<label for="connectionsCount">Connections Count</label>
+								<input
+									type="number"
+									class="form-control"
+									id="connectionsCount"
+									name="connectionsCount"
+									min="0"
+									placeholder="No. of connections"
+									[(ngModel)]="filter.numOfConnections"
+									#numOfConnections
+								/>
+							</div>
+							<div class="resetBtn">
+								<button
+									type="button"
+									color="primary"
+									(click)="filter.numOfConnections = null"
+								>
+									⟲
+								</button>
+							</div>
+						</div>
+
+						<!-- Submit button -->
+						<div class="form-group">
+							<input
+								type="submit"
+								class="form-control"
+								class="btn btn-primary btn-block"
+								value="Submit"
+								[disabled]="!validateForm()"
+							/>
+						</div>
+
+						<!-- Slider to select price range -->
+						<div class="form-group flex-container" class="ow-slider">
+							<div class="main-form">
+								<h4>
+									<u>Refine Flight Search</u>
+								</h4>
+								Price Range:
+								<nouislider
+									name="Pricerange"
+									[connect]="true"
+									[min]="0"
+									[max]="10000"
+									[step]="500"
+									[(ngModel)]="filter.priceRange"
+									(ngModelChange)="onChange()"
+									[disabled]="!validateForm()"
+								></nouislider>
+								Price Range: {{ filter.priceRange[0] | currency: 'USD' }} to
+								{{ filter.priceRange[1] | currency: 'USD' }}
+							</div>
+							<div class="resetBtn">
+								<button
+									type="button"
+									color="primary"
+									(click)="filter.priceRange = [1000, 7500]"
+								>
+									⟲
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Displayed if the input parameters returned no results -->
+	<div class="result-panel col-2">
+		<div *ngIf="noResults(); else flightsAvailable" class="results">
+			<h3 style="color: red; text-align: center">No results to display</h3>
+		</div>
+
+		<!-- Displayed when there are results matching the input -->
+		<ng-template #flightsAvailable>
+			<!-- Conditional display of table based on length of input array -->
+			<div *ngIf="flightArr?.length > 0" class="results"></div>
+			<!-- Child component to display results -->
+			<app-flight-search-results
+				[flightResults]="flightArr"
+			></app-flight-search-results>
+		</ng-template>
+	</div>
+</div>
